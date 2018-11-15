@@ -1,0 +1,40 @@
+-- This file has been generated from package.yaml by hpack version 0.28.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: e9fe16ffaefcd6af162a14b155b2ee76404a6c8e423dde5b222207268ee0f55e
+
+name:           tcp-listener
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/githubuser/socket-events#readme>
+homepage:       https://github.com/githubuser/tcp-listener#readme
+bug-reports:    https://github.com/githubuser/tcp-listener/issues
+author:         Author name here
+maintainer:     example@example.com
+copyright:      2018 Author name here
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    ChangeLog.md
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/tcp-listener
+
+library
+  exposed-modules:
+      TcpListener
+  other-modules:
+      Paths_tcp_listener
+  hs-source-dirs:
+      src
+  build-depends:
+      array
+    , base >=4.7 && <5
+    , network
+    , network-house
+    , pcap
+  default-language: Haskell2010
