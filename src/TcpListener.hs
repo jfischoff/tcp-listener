@@ -55,7 +55,6 @@ watch eh port = do
 
     case PacketParsing.doParse $ Packet.toInPack chunk of
       Nothing -> putStrLn "Parsing failure"
-      Just (packet :: IPv4.Packet (TCP.Packet (UArray Int Word8))) -> do
-        print packet
+      Just (packet :: IPv4.Packet (TCP.Packet (UArray Int Word8))) -> 
         handleTCPPacket eh $ IPv4.content packet
 
