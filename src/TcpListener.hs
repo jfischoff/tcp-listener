@@ -14,6 +14,7 @@ import Foreign.Ptr
 import Control.Monad (void)
 import Text.Printf
 import Data.List
+import Control.Monad
 
 data EventHandlers = EventHandlers
   { syn    :: IO ()
@@ -40,6 +41,9 @@ handleTCPPacket EventHandlers {..} TCP.Packet {..} = case controlBits of
   TCP.CB { syn = True }             -> syn
   TCP.CB { rst = True }             -> rst
 
+interruptibleLoop :: P.PcapHandle -> P.Callback -> IO ()
+interruptibleLoop h f = forever $ P.dispatch h 1 f
+
 watch :: EventHandlers -> Int -> IO ()
 watch eh port = do
   -- HACK to get the loopback interface
@@ -50,11 +54,11 @@ watch eh port = do
   -- filter the traffic by the deviceName and port
   setFilter handle ("tcp port " ++ show port) False 0xff000000
 
-  void $ P.loop handle (-1) $ \pktHdr bytes -> do
+  interruptibleLoop handle $ \pktHdr bytes -> do
     chunk <- makeUArray (fromIntegral $ hdrCaptureLength pktHdr) bytes
 
     case PacketParsing.doParse $ Packet.toInPack chunk of
       Nothing -> putStrLn "Parsing failure"
-      Just (packet :: IPv4.Packet (TCP.Packet (UArray Int Word8))) -> 
+      Just (packet :: IPv4.Packet (TCP.Packet (UArray Int Word8))) ->
         handleTCPPacket eh $ IPv4.content packet
 
