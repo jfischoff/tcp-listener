@@ -44,6 +44,7 @@ handleTCPPacket EventHandlers {..} TCP.Packet {..} = case controlBits of
   TCP.CB { syn = True, ack = True } -> synAck
   TCP.CB { syn = True }             -> syn
   TCP.CB { rst = True }             -> rst
+  _                                 -> pure ()
 
 interruptibleLoop :: P.PcapHandle -> P.Callback -> IO ()
 interruptibleLoop h f = forever $ P.dispatch h 1 f
