@@ -6,7 +6,7 @@ import qualified Net.PacketParsing as PacketParsing
 import Foreign.Marshal.Array
 import Data.Array.IArray
 import Net.IPv4 as IPv4
-import Net.TCP as TCP
+import qualified Net.TCP as TCP
 import Net.Ethernet as Ethernet
 import Data.Word
 import Data.Array.Unboxed
@@ -22,12 +22,16 @@ data EventHandlers = EventHandlers
   , synAck :: IO ()
   }
 
-defaultEventHandlers :: EventHandlers
-defaultEventHandlers = EventHandlers
-  { syn    = print "SYN Sent"
-  , rst    = print "RST Sent"
-  , synAck = print "SYN/ACK Sent"
-  }
+instance Semigroup EventHandlers where
+  x <> y = EventHandlers
+    { syn    = syn    x <> syn    y
+    , rst    = rst    x <> rst    y
+    , synAck = synAck x <> synAck y
+    }
+
+instance Monoid EventHandlers where
+  mempty = EventHandlers mempty mempty mempty
+  mappend = (<>)
 
 makeUArray :: Int -> Ptr Word8 -> IO (UArray Int Word8)
 makeUArray count ptr = do
